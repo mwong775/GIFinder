@@ -1,7 +1,7 @@
 import * as React from "react";
 import './App.css';
 import axios from 'axios';
-import logo from './giphy-logo.svg';
+// import logo from './giphy-logo.svg';
 import SearchBar from './Components/SearchBar';
 import GifList from './Components/GifList';
 
@@ -13,10 +13,6 @@ import GifList from './Components/GifList';
  const LANG = 'en';
 
 export default class App extends React.Component {
-    constructor() {
-      super();
-    }
-    
     state = {
         gifs: [],
         viewMode: 'Trending'
