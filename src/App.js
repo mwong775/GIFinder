@@ -2,61 +2,41 @@ import * as React from "react";
 import './App.css';
 import axios from 'axios';
 import logo from './giphy-logo.svg';
+import SearchBar from './Components/SearchBar';
+import GifList from './Components/GifList';
 
  const PUBLIC_KEY = 'wy1tKswrmePmcwQI2hV3RBd336yfjvkS';
  const BASE_URL = 'https://api.giphy.com/v1/gifs/';
- const LIMIT = 1;
+ const LIMIT = 15;
  const OFFSET = 0;
  const RATING = 'G';
  const LANG = 'en';
 
- function data() {
-     return {
-       gif: [], //this is to hold the whole array (optional)
-       gifSrc: [], //this is required to render the gif in your img src
-       search: '', //this v-model will be the text the user puts in the search box
-       valid: '' //this is for vuetify markup to validate text was entered (optional)
-     }
-   };
-
-function testGet() {
-
-}
-
 export default class App extends React.Component {
-    state = {
-        gif: {},
-        gifSrc: ''
+    constructor() {
+      super();
     }
+    
+    state = {
+        gifs: [],
+        viewMode: 'Trending'
+        // gifData: {}
+    }
+    // this.handleInputChange = this.handleInputChange.bind(this);
 
     componentDidMount() {
+      this.getTrending();
+    }
+
+    getTrending() {
         // Make a request for a user with a given ID
-        let search = "duck";
-        console.log("GET at: ", BASE_URL + 'trending?' + 'api_key=' + PUBLIC_KEY
-//                                                                    + '&q=' + search
-                                                                                    + '&limit=' + LIMIT
-//                                                                                    + '&offset=' + OFFSET
-                                                                                   + '&rating=' + RATING
-//                                                                                   + '&lang=' + LANG
-                                                                                   );
-        axios.get(BASE_URL + 'trending?'
-        + 'api_key='
-        + PUBLIC_KEY
-//        + '&q=' + search
-        + '&limit=' + LIMIT
-//        + '&offset=' + OFFSET
-        + '&rating=' + RATING
-//        + '&lang=' + LANG
-        )
+        const url = BASE_URL + 'trending?' + 'api_key=' + PUBLIC_KEY + '&limit=' + LIMIT + '&rating=' + RATING;
+        axios.get(url)
           .then(response => {
             // handle success
             console.log("response:", response);
-             const gif = response.data;
-             this.setState({gif: gif});
-             const src = response.data.data[0].images.original.url;
-             console.log("gif src", src);
-             this.setState({gifSrc: [src]});
-             console.log("set gifSrc", this.state.gifSrc);
+             this.setState({gifs:  response.data.data});
+             console.log("set gifs", this.state.gifs);
              console.log("STATE", this.state);
           })
           .catch(function (error) {
@@ -67,23 +47,35 @@ export default class App extends React.Component {
             // always executed
           });
     }
+
+    handleInputChange = (term) => {
+    console.log("in App", term);
+    const url = BASE_URL + 'search?' + 'api_key=' + PUBLIC_KEY + '&q=' + term  + '&limit=' + LIMIT   + '&offset=' + OFFSET + '&rating=' + RATING + '&lang=' + LANG;
+    console.log('url for GET: ', url);
+    axios.get(url)
+          .then(response => {
+            console.log("response:", response);
+            if(response.data.data[0]) {
+              // const src = response.data.data[0].images.original.url; // single GIF
+              const searching = "Displaying results for: " + term;
+              this.setState({gifs:  response.data.data, viewMode: searching});
+              console.log("set gifs on search", this.state.gifs);
+            }
+            else {
+              this.getTrending(); // search input is empty (typically upon delete)
+              this.setState({viewMode: "Trending"});
+            }
+          })
+  }
+
     render() {
     return(
       <div className="App">
-          <header className="App-header">
-            <img src={this.state.gifSrc} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.js</code> and save to reload~~~~~~~
-            </p>
-            <a
-              className="App-link"
-              onClick={testGet}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
+          <h1>GIFinder</h1>
+          <h5>A simple search to discover awesome GIFs, powered by the Giphy API</h5>
+          <SearchBar onInputChange={this.handleInputChange}/>
+          <h2>{this.state.viewMode}</h2>
+             <GifList gifs={this.state.gifs} />
         </div>
     );
     }
