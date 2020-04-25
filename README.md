@@ -1,6 +1,6 @@
 # GIFinder
 
-A simple search to discover awesome GIFs, powered by the Giphy API
+A ReactJS application to search and discover awesome GIFs using the Giphy API
 
 ## Available Scripts
 
