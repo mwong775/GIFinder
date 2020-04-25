@@ -1,8 +1,7 @@
 # GIFinder
 
-A ReactJS application to search and discover awesome GIFs using the Giphy API.
-
-A demo is featured on my website `mwong775.github.io`, under the `Projects` tab.
+A ReactJS application to search and discover awesome GIFs using the Giphy API.<br />
+A demo is featured on my website [mwong775.github.io](mwong775.github.io), under the [Projects](https://mwong775.github.io/#/gifinder) tab.
 
 ## Available Scripts
 
